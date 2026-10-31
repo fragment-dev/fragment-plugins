@@ -1,0 +1,14 @@
+{
+  "name": "fragment-plugins",
+  "owner": { "name": "Fragment", "url": "https://fragment.dev" },
+  "description": "Fragment's plugins for coding agents.",
+  "plugins": [
+    {
+      "name": "fragment",
+      "source": "./plugins/fragment",
+      "description": "Build money flows (credits, wallets, payouts, escrow, spending limits) on a ledger that enforces its own rules, and prove them with a judge.",
+      "category": "development",
+      "tags": ["ledger", "credits", "wallets", "payments"]
+    }
+  ]
+}

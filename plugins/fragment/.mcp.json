@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "fragment": {
+      "type": "http",
+      "url": "${user_config.fragment_mcp_url}"
+    }
+  }
+}

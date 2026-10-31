@@ -1,0 +1,60 @@
+{
+  "key": "app-credits",
+  "name": "Prepaid credits",
+  "chartOfAccounts": {
+    "defaultCurrency": { "code": "USD" },
+    "defaultCurrencyMode": "single",
+    "defaultConsistencyConfig": { "lines": "eventual", "totalBalanceUpdates": "eventual" },
+    "accounts": [
+      { "key": "assets", "type": "asset", "children": [
+        { "key": "card-receipts", "consistencyConfig": { "totalBalanceUpdates": "strong" } },
+        { "key": "markers", "consistencyConfig": { "totalBalanceUpdates": "strong" } }
+      ] },
+      { "key": "income", "type": "income", "children": [
+        { "key": "usage", "consistencyConfig": { "totalBalanceUpdates": "strong" } }
+      ] },
+      { "key": "liabilities", "type": "liability", "children": [
+        { "key": "wallets", "children": [
+          { "key": "wallet", "template": true, "children": [
+            { "key": "purchased", "consistencyConfig": { "totalBalanceUpdates": "strong" } }
+          ] }
+        ] },
+        { "key": "once", "children": [
+          { "key": "purchase", "template": true, "consistencyConfig": { "totalBalanceUpdates": "strong" } },
+          { "key": "usage", "template": true, "consistencyConfig": { "totalBalanceUpdates": "strong" } }
+        ] }
+      ] }
+    ]
+  },
+  "ledgerEntries": {
+    "types": [
+      {
+        "type": "credits_purchased",
+        "description": "Purchase {{purchase_id}}: {{credits}} credits to {{wallet_id}}",
+        "lines": [
+          { "key": "cash", "account": { "path": "assets/card-receipts" }, "amount": "{{credits}}" },
+          { "key": "wallet", "account": { "path": "liabilities/wallets/wallet:{{wallet_id}}/purchased" }, "amount": "{{credits}}" },
+          { "key": "marker", "account": { "path": "liabilities/once/purchase:{{purchase_id}}" }, "amount": "1" },
+          { "key": "marker_offset", "account": { "path": "assets/markers" }, "amount": "1" }
+        ],
+        "conditions": [
+          { "account": { "path": "liabilities/once/purchase:{{purchase_id}}" }, "postcondition": { "totalBalance": { "eq": "1" } } }
+        ]
+      },
+      {
+        "type": "credits_consumed",
+        "description": "Usage {{usage_id}}: {{credits}} credits from {{wallet_id}}",
+        "lines": [
+          { "key": "wallet", "account": { "path": "liabilities/wallets/wallet:{{wallet_id}}/purchased" }, "amount": "-{{credits}}" },
+          { "key": "revenue", "account": { "path": "income/usage" }, "amount": "{{credits}}" },
+          { "key": "marker", "account": { "path": "liabilities/once/usage:{{usage_id}}" }, "amount": "1" },
+          { "key": "marker_offset", "account": { "path": "assets/markers" }, "amount": "1" }
+        ],
+        "conditions": [
+          { "account": { "path": "liabilities/wallets/wallet:{{wallet_id}}/purchased" }, "postcondition": { "totalBalance": { "gte": "0" } } },
+          { "account": { "path": "liabilities/once/usage:{{usage_id}}" }, "postcondition": { "totalBalance": { "eq": "1" } } }
+        ]
+      }
+    ]
+  }
+}
