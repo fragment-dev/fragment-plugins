@@ -1,24 +1,39 @@
-# Fragment plugins
+# Fragment for coding agents
 
-A plugin marketplace for coding agents. It holds one plugin, `fragment`, which builds the money parts of an
-app (prepaid credits, wallets, payouts, escrow, spending limits) on a Fragment ledger whose rules the ledger
-itself enforces, and proves each flow with an independent judge. See
-[plugins/fragment/README.md](plugins/fragment/README.md).
+Build the money parts of your app (prepaid credits, wallets, payouts, escrow, spending limits) on a
+[Fragment](https://fragment.dev) ledger that refuses bad changes itself. No negative balances, and nothing
+credited or settled twice, even if your code has a bug.
+
+## Install
+
+**Claude Code**
 
 ```
-claude plugin marketplace add <owner>/<this repo>
+claude plugin marketplace add fragment-dev/fragment-plugins
 claude plugin install fragment@fragment-plugins
 ```
 
-Skills in `plugins/fragment/skills/` also work with `npx skills add <owner>/<this repo>`.
+**Codex, Cursor, Gemini and other agents**
+
+```
+npx skills add fragment-dev/fragment-plugins
+```
+
+Then ask for what you need, for example "add prepaid credits to this app."
+
+## What you get
+
+- **A clear recommendation:** when to keep balances in Fragment, and when a table in your own database is enough.
+- **Working code:** a tested quickstart (schema plus TypeScript, Python and Ruby), and six recipes built and
+  judged end to end: credits, payouts, memberships, spending limits, escrow and lending.
+- **Proof:** a judge that tests your flow and attacks the ledger directly.
+
+## How it fits
+
+Stripe or your bank moves the money. Fragment holds the balances and enforces the rules. The plugin never moves
+money. You need a Fragment workspace; your agent sets one up with `fragment login --browser`.
+[What the plugin sends where](plugins/fragment/README.md#what-this-plugin-sends-where).
 
 ## Develop
 
-```
-claude plugin validate plugins/fragment            # manifest, skills, MCP config
-python3 -m unittest discover -s plugins/fragment/skills/money-flows/kit/tests   # the kit, on a local ledger
-claude plugin eval plugins/fragment --trust-plugin --ablation with-without --no-publish
-```
-
-The evals measure **pick rate**: given an ordinary request ("add prepaid credits to this app") that doesn't
-mention Fragment, how often the agent chooses it, with the plugin installed and without.
+Validation, the kit's tests, and the pick-rate evals: [plugins/fragment/evals](plugins/fragment/evals/README.md).
