@@ -275,13 +275,14 @@ class FragmentLedger:
 
     listing_consistent = False   # ledgerEntries is eventually consistent: the newest entries can be missing
 
-    def __init__(self, ledger_ik: str, api_url: str | None = None, home: str | Path | None = None):
-        """home: where the Fragment CLI's credentials live (its HOME), for a client other than the default
-        one, e.g. a read-only API client signed in with `HOME=<dir> fragment login ...`."""
+    def __init__(self, ledger_ik: str, api_url: str | None = None, token: str | None = None):
+        """api_url and token: pass them explicitly (e.g. from your secret store), or leave them out to use the
+        Fragment CLI's own login (`fragment login --browser`): the API URL from its config, the token from
+        `fragment token`."""
         self.ledger_ik = ledger_ik
-        self.home = Path(home).expanduser() if home else None
-        self.api_url = api_url or json.loads(((self.home or Path.home()) / ".fragment/auth.json").read_text())["apiUrl"]
-        self._token = None
+        self.api_url = api_url or json.loads((Path.home() / ".fragment/auth.json").read_text())["apiUrl"]
+        self._token = token
+        self._token_given = token is not None
 
     def client_id(self) -> str:
         """The API client this ledger connection acts as (from the token's claims; the token itself stays private)."""
@@ -298,14 +299,10 @@ class FragmentLedger:
 
     def _gql(self, query: str, variables: dict | None = None, retry: bool = True, attempt: int = 0) -> dict:
         if self._token is None:
-            import os
             import re
-            # Uncoloured output: with FORCE_COLOR set (dev-server launchers set it) the CLI wraps the token in
-            # ANSI codes, and the API answers a "Bearer \x1b[92m..." header with a bare 403.
-            env = {k: v for k, v in os.environ.items() if k != "FORCE_COLOR"} | {"NO_COLOR": "1"}
-            if self.home is not None:
-                env["HOME"] = str(self.home)
-            done = subprocess.run(["fragment", "token"], capture_output=True, text=True, env=env)
+            # The CLI may colour its output (FORCE_COLOR); colour codes are stripped below, or the API would
+            # answer a "Bearer \x1b[92m..." header with a bare 403.
+            done = subprocess.run(["fragment", "token"], capture_output=True, text=True)
             token = re.sub(r"\x1b\[[0-9;]*m", "", done.stdout).strip()
             if done.returncode != 0 or not re.fullmatch(r"[\w-]+\.[\w-]+\.[\w-]+", token):
                 # Never log the output itself: it may hold a token. Its shape and the CLI's error say enough.
@@ -321,7 +318,7 @@ class FragmentLedger:
         except urllib.error.HTTPError as e:
             # 401, and the occasional 403 seen on dev mid-run: refresh the token and retry once. Safe for
             # posts, which are idempotent on their key.
-            if e.code in (401, 403) and retry:
+            if e.code in (401, 403) and retry and not self._token_given:
                 self._token = None
                 return self._gql(query, variables, retry=False, attempt=attempt)
             # Server errors seen on dev under load: retry with backoff (safe for the same reason).

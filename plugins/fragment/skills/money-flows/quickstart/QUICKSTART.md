@@ -25,23 +25,16 @@ fragment create-ledger -i credits-test -n "Credits (test)" -s credits-schema.jso
 fragment api-client create --workspace <workspace-id> --name "app" --role admin --format env --output .env.fragment
 ```
 
-`.env.fragment` holds the client's API URL, auth URL, client id, secret and scope; map them to the
-`FRAGMENT_*` variables below. Keep it out of version control.
+`.env.fragment` holds the client's API URL, auth URL, client id, secret and scope. Put them in your app's
+secret store and pass them to the client below. Keep the file out of version control.
 
 ## 2. Post entries from the app
 
 ```typescript
 import { createFragmentClient, BadRequestError } from "@fragment-dev/node-client";
 
-const fragment = createFragmentClient({
-  params: {
-    apiUrl: process.env.FRAGMENT_API_URL!,
-    authUrl: process.env.FRAGMENT_AUTH_URL!,
-    clientId: process.env.FRAGMENT_CLIENT_ID!,
-    clientSecret: process.env.FRAGMENT_CLIENT_SECRET!,
-    scope: process.env.FRAGMENT_SCOPE!,
-  },
-});
+// apiUrl, authUrl, clientId, clientSecret and scope: the API client from step 1, loaded from your secret store.
+const fragment = createFragmentClient({ params: { apiUrl, authUrl, clientId, clientSecret, scope } });
 const ledgerIk = "credits-test";
 
 // Stripe webhook: checkout.session.completed. The session id is the purchase id, so a
