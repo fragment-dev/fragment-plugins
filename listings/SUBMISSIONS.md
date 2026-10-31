@@ -1,7 +1,7 @@
 # Listing the Fragment plugin
 
 Everything below is prepared but **not submitted**. Prerequisites: the repo is public, and the release commit
-is tagged (latest: `v0.1.1`; pin the tag you submit).
+is tagged (latest: `v0.1.3`; pin the tag you submit).
 
 ## Shared copy
 

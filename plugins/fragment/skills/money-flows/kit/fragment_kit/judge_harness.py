@@ -114,8 +114,7 @@ class Harness:
         cmd = self.m["start"]["command"].format(db=self.db, ledger=self.ledger_ik, rail=self.rail.url, port=self.port)
         cwd = (self.build / self.m["start"].get("cwd", ".")).resolve()
         self.proc = subprocess.Popen(shlex.split(cmd), cwd=cwd, stdout=subprocess.DEVNULL,
-                                     stderr=open(self.db.with_suffix(".log"), "w"), start_new_session=True,
-                                     env={**os.environ, "NO_COLOR": "1"})
+                                     stderr=open(self.db.with_suffix(".log"), "w"), start_new_session=True)   # inherits the environment; ledger.py strips CLI colour codes itself
         for _ in range(300):
             try:
                 urllib.request.urlopen(self.base + "/", timeout=2)

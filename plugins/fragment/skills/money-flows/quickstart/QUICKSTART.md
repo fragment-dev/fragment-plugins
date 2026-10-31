@@ -74,8 +74,7 @@ export async function consume(usageId: string, walletId: string, credits: number
 
 ### The same post in Python, Ruby and Go
 
-The SDKs ([Python](https://github.com/fragment-dev/fragment-python), [Ruby](https://github.com/fragment-dev/fragment-ruby),
-[Go](https://github.com/fragment-dev/fragment-go)) take the same fields. A refused entry is an error with code
+The [SDKs](https://fragment.dev/api-reference/ledger-sdks) (TypeScript, Python, Ruby, Go) take the same fields. A refused entry is an error with code
 `conditional_request_failed`.
 
 ```python
@@ -98,7 +97,7 @@ fragment.add_ledger_entry({
 })
 ```
 
-For Go, `go get github.com/fragment-dev/fragment-go/v3` and follow its README; any language can also call the
+For Go, see the SDK page above; any language can also call the
 GraphQL `addLedgerEntry` mutation directly.
 
 Read a balance with the `ledgerAccount` query (path `liabilities/wallets/wallet:<id>/purchased`,
