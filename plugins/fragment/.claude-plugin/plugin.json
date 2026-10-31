@@ -1,13 +1,17 @@
 {
   "name": "fragment",
-  "version": "0.1.4",
+  "version": "0.1.5",
   "description": "Build money flows in your app (prepaid credits, wallets, payouts, escrow, spending limits) on a Fragment ledger whose rules the ledger itself enforces, and prove them with an independent judge.",
   "author": {
     "name": "Fragment",
     "url": "https://fragment.dev"
   },
   "homepage": "https://fragment.dev",
+  "repository": "https://github.com/fragment-dev/fragment-plugins",
+  "documentationUrl": "https://github.com/fragment-dev/fragment-plugins/tree/main/plugins/fragment#readme",
+  "supportUrl": "https://fragment.dev/contact",
   "privacyPolicyUrl": "https://fragment.dev/legal",
+  "termsOfServiceUrl": "https://fragment.dev/legal",
   "license": "MIT",
   "keywords": [
     "ledger",
