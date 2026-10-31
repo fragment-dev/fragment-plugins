@@ -1,0 +1,11 @@
+{
+  "$schema": "https://static.modelcontextprotocol.io/schemas/2025-09-29/server.schema.json",
+  "name": "dev.fragment/fragment",
+  "title": "Fragment",
+  "description": "Design and simulate Fragment ledger schemas (chart of accounts, entry types with conditions, scenarios) for money flows such as credits, wallets, payouts and escrow.",
+  "version": "0.1.0",
+  "websiteUrl": "https://fragment.dev/api-reference/mcp",
+  "remotes": [
+    { "type": "streamable-http", "url": "<BLOCKED: one public MCP URL for all workspaces; today each workspace's URL comes from the dashboard>" }
+  ]
+}

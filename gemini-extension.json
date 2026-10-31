@@ -1,0 +1,6 @@
+{
+  "name": "fragment",
+  "version": "0.1.0",
+  "description": "Build money flows (credits, wallets, payouts, escrow, spending limits) on a Fragment ledger whose rules the ledger itself enforces.",
+  "contextFileName": "GEMINI.md"
+}

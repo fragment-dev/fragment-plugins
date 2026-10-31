@@ -1,0 +1,8 @@
+{
+  "name": "fragment-plugins",
+  "owner": { "name": "Fragment", "url": "https://fragment.dev" },
+  "plugins": [
+    { "name": "fragment", "source": "./plugins/fragment",
+      "description": "Build money flows (credits, wallets, payouts, escrow, spending limits) on a ledger that enforces its own rules." }
+  ]
+}

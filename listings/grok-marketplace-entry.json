@@ -1,0 +1,14 @@
+{
+  "name": "fragment",
+  "description": "Build money flows (credits, wallets, payouts, escrow, spending limits) on a Fragment ledger whose rules the ledger itself enforces.",
+  "category": "development",
+  "source": {
+    "source": "url",
+    "url": "https://github.com/fragment-dev/fragment-plugins.git",
+    "sha": "<40-char commit SHA of the release, filled in at submission>",
+    "path": "plugins/fragment"
+  },
+  "homepage": "https://fragment.dev",
+  "keywords": ["ledger", "credits", "wallets", "payments", "payouts", "escrow"],
+  "domains": ["fragment.dev"]
+}
