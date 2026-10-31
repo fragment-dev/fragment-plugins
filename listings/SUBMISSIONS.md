@@ -21,7 +21,7 @@ is tagged (latest: `v0.1.1`; pin the tag you submit).
 - **Data disclosure:** the skills and kit run locally. With the optional MCP configured, the agent calls the
   user's own Fragment workspace with the user's authorization. The kit's `FragmentLedger` calls the Fragment
   API with the Fragment CLI's stored credentials. Nothing is sent anywhere else. The plugin never moves money.
-- **Support:** <support email to fill in> · **Privacy policy:** <URL to fill in> · **Icon:** <512–2048 px square PNG>
+- **Support:** help@fragment.dev · **Privacy policy:** https://fragment.dev/legal · **Icon:** `plugins/fragment/.claude-plugin/icon.png` (1024 × 1024, the press-kit square logo, dark)
 
 ## Directories
 
@@ -30,7 +30,7 @@ is tagged (latest: `v0.1.1`; pin the tag you submit).
 | Our Claude Code marketplace | `claude plugin marketplace add fragment-dev/fragment-plugins` | Ready; works today on the private repo | Make the repo public |
 | skills.sh / `npx skills add fragment-dev/fragment-plugins` | Automatic from the public repo | Ready | Make the repo public |
 | Gemini CLI extensions | Daily crawl of public repos with the `gemini-cli-extension` topic | `gemini-extension.json` + `GEMINI.md` added | Add the topic; check with `gemini extensions install <repo>` |
-| Anthropic directory (plugin) | claude.ai/directory/manage → Submit new → Plugin bundle → this repo, path `plugins/fragment` | Validator passes; icon and privacy URL missing | Add `icon` and `privacyPolicyUrl` to plugin.json; answer the data-handling questions with the disclosure above |
+| Anthropic directory (plugin) | claude.ai/directory/manage → Submit new → Plugin bundle → this repo, path `plugins/fragment` | Validator passes; icon and privacy URL added | Answer the data-handling questions with the disclosure above |
 | Anthropic directory (MCP connector) | Same portal → MCP connector | **Blocked**: needs one public MCP URL | Fragment eng: a shared MCP endpoint (or confirm per-workspace URLs can't be listed) |
 | Official MCP registry | `mcp-publisher init` (to get the current schema), then publish with the fields in [mcp-registry-server.json](mcp-registry-server.json) | **Blocked** on the same URL; DNS TXT on fragment.dev for `dev.fragment/*` | DNS record; fill in the URL |
 | Cursor marketplace | cursor.com/marketplace/publish (manual review, ~2 weeks reported) | `.cursor-plugin/` manifests added (skills only; no MCP, since the URL is per workspace) | Submit the form with the shared copy |
