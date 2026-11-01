@@ -78,6 +78,15 @@ def parse_jsonc(text: str):
 
 def check_schema(schema: dict):
     """Refuses what `fragment verify-schema` refuses and the local ledger would otherwise misread."""
+    chart = schema.get("chartOfAccounts", {})
+    if "totalBalanceUpdates" not in chart.get("defaultConsistencyConfig", {}):
+        def walk(accounts):
+            for a in accounts:
+                if "totalBalanceUpdates" in a.get("consistencyConfig", {}):
+                    raise ValueError(f"account {a['key']} sets totalBalanceUpdates, so chartOfAccounts needs "
+                                     f"defaultConsistencyConfig with totalBalanceUpdates too")
+                walk(a.get("children", []))
+        walk(chart.get("accounts", []))
     for t in schema["ledgerEntries"]["types"]:
         for c in t.get("conditions", []):
             if "precondition" in c and "postcondition" in c:

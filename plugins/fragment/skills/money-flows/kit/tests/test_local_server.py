@@ -110,5 +110,32 @@ class LocalServerTest(unittest.TestCase):
         self.assertTrue(self.buy("p1", 30)["isIkReplay"])
 
 
+class NamesStayInsideTheDirectory(unittest.TestCase):
+    def test_refuses_paths_as_names(self):
+        from local_server import BadRequest
+        with tempfile.TemporaryDirectory() as d:
+            ledgers = Ledgers(Path(d) / "inner")
+            schema = load_schema(SCHEMA)
+            for key in ("../../escape", "a/b", "..", "", "a\\b"):
+                with self.assertRaises(BadRequest):
+                    ledgers.store_schema({**schema, "key": key}) if key else ledgers.schema_file(key)
+            stored = ledgers.store_schema(schema)
+            for ik in ("../../escape", "a/b", ".."):
+                with self.assertRaises(BadRequest):
+                    ledgers.create(ik, ik, stored["key"])
+            self.assertEqual([p.name for p in Path(d).iterdir()], ["inner"])
+
+
+class SchemaChecks(unittest.TestCase):
+    def test_account_consistency_needs_the_default(self):
+        from ledger import check_schema
+        schema = {"chartOfAccounts": {"accounts": [{"key": "a", "children": [
+            {"key": "b", "consistencyConfig": {"totalBalanceUpdates": "strong"}}]}]}, "ledgerEntries": {"types": []}}
+        with self.assertRaises(ValueError):
+            check_schema(schema)
+        schema["chartOfAccounts"]["defaultConsistencyConfig"] = {"lines": "eventual", "totalBalanceUpdates": "eventual"}
+        check_schema(schema)
+
+
 if __name__ == "__main__":
     unittest.main()

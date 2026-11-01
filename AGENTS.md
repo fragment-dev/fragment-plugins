@@ -13,7 +13,7 @@ Build in the app's own language on the Fragment SDK, run it with no account on t
 ## Layout
 
 - `plugins/fragment/` - the plugin: `plugin.json` (agent-plugins.org manifest), `.claude-plugin/` and
-  `.cursor-plugin/` (client manifests), `skills/` (four skills), `.mcp.json`.
+  `.cursor-plugin/` (client manifests), `skills/` (the guidance skills, plus short entry skills named for what people search), `.mcp.json`.
 - `plugins/fragment/skills/money-flows/kit/` - the kit: local ledger and endpoint, service scaffold, judge harness
   (Python 3.10+, standard library only) and its tests.
 - `plugins/fragment/evals/` - pick-rate evals and build-test baselines; `tools/` - the test harnesses.

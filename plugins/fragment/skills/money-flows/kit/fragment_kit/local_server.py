@@ -30,6 +30,15 @@ from ledger import LocalLedger, check_schema, load_schema
 
 FIELD = re.compile(r"^\s*(?:(?:query|mutation)\b[^{]*)?\{\s*(?:\w+\s*:\s*)?(\w+)", re.S)
 COMMENT = re.compile(r"#[^\n]*")
+SAFE_NAME = re.compile(r"[A-Za-z0-9][A-Za-z0-9._:-]{0,127}")
+MAX_BODY = 16 * 1024 * 1024
+
+
+def safe_name(what: str, value) -> str:
+    """Schema keys and ledger iks name files under --dir, so they can't contain path separators."""
+    if not isinstance(value, str) or not SAFE_NAME.fullmatch(value) or ".." in value:
+        raise BadRequest("bad_request", f"invalid {what}: use letters, digits, '.', '_', ':' or '-'")
+    return value
 
 
 def now() -> str:
@@ -51,6 +60,7 @@ class Ledgers:
         key = schema.get("key")
         if not key:
             raise BadRequest("bad_request", "the schema needs a key")
+        safe_name("schema key", key)
         try:
             check_schema(schema)
         except (ValueError, KeyError, TypeError) as e:
@@ -67,6 +77,7 @@ class Ledgers:
         return {"key": key, "name": schema.get("name", key), "version": {"version": v["version"], "created": v["created"]}}
 
     def schema_file(self, key: str) -> Path:
+        safe_name("schema key", key)
         f = self.root / "schemas" / f"{key}.json"
         if not f.exists():
             raise BadRequest("not_found", f"no schema with key {key}; store it first")
@@ -75,6 +86,7 @@ class Ledgers:
         return out
 
     def create(self, ik: str, name: str, schema_key: str) -> tuple[dict, bool]:
+        safe_name("ledger ik", ik)
         self.schema_file(schema_key)
         with self.lock:
             if ik in self.index:
@@ -122,13 +134,13 @@ class Api:
     def entry_view(self, ledger_ik: str, ik: str) -> dict | None:
         led = self.ledgers.get(ledger_ik)
         with led.lock:
-            row = led.db.execute("SELECT type, lines, seq FROM entries WHERE ik = ?", (ik,)).fetchone()
+            row = led.db.execute("SELECT type, lines, seq, params FROM entries WHERE ik = ?", (ik,)).fetchone()
         if not row:
             return None
         lines = json.loads(row[1])
         created = self.created(ledger_ik, ik)
         return {"id": f"entry_{ledger_ik}_{row[2]}", "ik": ik, "type": row[0], "posted": created, "created": created,
-                "description": "", "hidden": False,
+                "description": "", "hidden": False, "parameters": json.loads(row[3]),
                 # as Fragment: an entry read back pages its lines; addLedgerEntry returns them as a list
                 "lines": self.page([{"id": f"line_{row[2]}_{n}", "amount": str(a), "account": {"path": p}}
                                     for n, (p, a) in enumerate(lines.items())])}
@@ -255,7 +267,11 @@ def serve(api: Api, host: str, port: int):
             self.wfile.write(data)
 
         def do_POST(self):
-            raw = self.rfile.read(int(self.headers.get("Content-Length") or 0))
+            size = int(self.headers.get("Content-Length") or 0)
+            if size > MAX_BODY:
+                self.close_connection = True
+                return self._json(413, {"error": "request too large"})
+            raw = self.rfile.read(size)
             if self.path.rstrip("/").endswith("oauth2/token"):
                 return self._json(200, {"access_token": "local-" + secrets.token_hex(8), "token_type": "Bearer",
                                         "expires_in": 3600})
