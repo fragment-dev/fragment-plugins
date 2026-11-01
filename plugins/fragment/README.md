@@ -9,7 +9,7 @@ capture larger than its hold is refused by Fragment, even if the app's code is w
 
 | Part | What it does |
 |---|---|
-| `money-flows` skill | The entry point: when to use a ledger, the workflow, and six recipes |
+| `money-flows` skill | The entry point: when to use a ledger, building it into your app, proving it, and six recipes |
 | `money-flow-spec` skill | Writes the flow's spec: parties, states, amounts, rounding, time, failure, invariants, every field |
 | `ledger-rules` skill | Designs a schema whose entry types enforce the invariants, from tested primitives |
 | `judge-a-flow` skill | Proves the flow with an independent judge that also attacks the ledger directly |
@@ -29,6 +29,8 @@ Then ask for what you need, for example "add prepaid credits to this app".
 ## What this plugin sends where
 
 - The skills and the kit run locally. The kit's local ledger stores data in a SQLite file you choose.
+- The local Fragment endpoint (`local_server.py`) listens on 127.0.0.1 only, keeps its ledgers in a folder on
+  your machine (`.fragment-local/` by default), and sends nothing anywhere.
 - With the MCP configured, Claude calls your workspace's Fragment MCP server with your authorization, to read
   and change schemas and scenarios in that workspace.
 - The kit's `FragmentLedger` calls the Fragment API with the Fragment CLI's stored credentials, to post

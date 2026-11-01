@@ -48,3 +48,25 @@ changing anything: two of the misses so far were the judge, one was a turn limit
 
 A regression is any drop in "with skills" below the baseline, or any "without" above 0 (that would mean the
 baseline arm is picking up the skills).
+
+## Build trial: can an agent finish?
+
+Pick rate measures the choice. The build trial measures the result: an agent with the bare skills gets a small
+app (`tools/build-trial/<task>/`) and an ordinary request, in a fresh folder with no Fragment account and a
+30-minute limit. Read every run's diff and answer: how long it took, whether the app runs its real Fragment code
+(the SDK, against the local endpoint) and refuses an overspend, and whether the answer ends with "Run it on
+Fragment".
+
+```
+# Codex (sandboxed, network on) and Cursor's agent (unsandboxed, --force) in temp folders; uses your accounts
+tools/build-trial.sh <dir> 2              # tasks: credits-py (Python), budgets-ts (TypeScript)
+```
+
+| Version | Agent | Time per run | SDK + local endpoint | Ends with "Run it on Fragment" |
+|---|---|---|---|---|
+| v0.1.6 | Codex | 1–5 min | 0 of 4 (2 own SQLite, 2 full workflow with a Python service in a TS app) | 0 of 4 |
+| v0.1.6 | Cursor | about 20 min, up to 5,100 lines | no | no |
+| v0.1.7 | Codex | 2–3.5 min, 800–1,600 lines | 4 of 4 | 4 of 4 |
+| v0.1.7 | Cursor | 9–11 min, 385–960 lines | 4 of 4 | 2 of 4 (2 runs ended on background tasks before their summary) |
+
+Codex copied the endpoint into the app in 3 of 4 v0.1.7 runs; packaging it (`pipx run`/`npx`) would remove that.
