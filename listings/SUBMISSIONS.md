@@ -36,7 +36,7 @@ is tagged (latest: `v0.1.10`; pin the tag you submit).
 | Official MCP registry | `mcp-publisher init` (to get the current schema), then publish with the fields in [mcp-registry-server.json](mcp-registry-server.json) | **Blocked** on the same URL; DNS TXT on fragment.dev for `dev.fragment/*` | DNS record; fill in the URL |
 | Cursor marketplace | cursor.com/marketplace/publish (manual review, ~2 weeks reported) | **Submitted 31 Oct** (publisher application, handle `fragment`, owner Individual · tom@fragment.dev) | Wait for Cursor's review email |
 | OpenAI (ChatGPT / Codex plugins) | platform.openai.com/plugins → Create plugin → "Skills only" | Ready as skills only | Identity verification; domain challenge file on fragment.dev |
-| Grok Build | PR to xai-org/plugin-marketplace with [grok-marketplace-entry.json](grok-marketplace-entry.json) | **PR [xai-org/plugin-marketplace#1805](https://github.com/xai-org/plugin-marketplace/pull/1805)**, pinned to v0.1.9 (`632f696`); waiting for code-owner review | On each release: repin the SHA and version, run their `generate-plugin-index.py` |
+| Grok Build | PR to xai-org/plugin-marketplace with [grok-marketplace-entry.json](grok-marketplace-entry.json) | **PR [xai-org/plugin-marketplace#1805](https://github.com/xai-org/plugin-marketplace/pull/1805)**, pinned to v0.1.10 (`eafbc39`); waiting for code-owner review | On each release: repin the SHA and version, run their `generate-plugin-index.py` |
 | VS Code / Copilot | Via the MCP registry, then partnerships@github.com | Blocked on the MCP URL | — |
 
 **Policy note:** Anthropic's connector review and OpenAI's plugin guidelines both refuse tools that transfer
