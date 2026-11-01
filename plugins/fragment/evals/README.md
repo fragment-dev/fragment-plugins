@@ -59,7 +59,8 @@ Fragment".
 
 ```
 # Codex (sandboxed, network on) and Cursor's agent (unsandboxed, --force) in temp folders; uses your accounts
-tools/build-trial.sh <dir> 2              # tasks: credits-py (Python), budgets-ts (TypeScript)
+tools/build-trial.sh <dir> 2 [tasks]      # default: credits-py, budgets-ts; also payouts-ts, memberships-py, business-py
+tools/return-trial.sh <build-test-dir> <dir>   # a later session changes those apps: does it stay on the ledger?
 ```
 
 | Version | Agent | Time per run | SDK + local endpoint | Ends with "Run it on Fragment" |
@@ -73,6 +74,17 @@ tools/build-trial.sh <dir> 2              # tasks: credits-py (Python), budgets-
 | v0.1.7, outside user | Claude Code plugin (Instinct, Codespace) | refusal at 2m46s, done at 4m52s | yes (Python SDK) | yes |
 | v0.1.9 | Codex | 2–3 min | 4 of 4; demos follow the app's config in 4 of 4 | 4 of 4, with `fragment workspace` |
 | v0.1.9 | Cursor | 8–12.5 min, all ended on their own | 4 of 4 | 4 of 4, with `fragment workspace` |
+
+v0.1.10, heavier tasks (Dots-style payouts, Skiv-style memberships), with Codex in an empty home:
+
+| Version | Agent | Time per run | SDK + local endpoint | Spec, manifest or judge written |
+|---|---|---|---|---|
+| v0.1.9 | Codex | 4-6.6 min | payouts 2 of 2, memberships 0 of 2 | 4 of 4 |
+| v0.1.9 | Cursor | 23-28 min | 0 of 4 | 4 of 4 |
+| v0.1.10 | Codex | 3.6-11.3 min | 4 of 4 | 0 of 4 |
+| v0.1.10 | Cursor | 14.6-19.2 min | 4 of 4 | 0 of 4 |
+
+All memberships runs show the task's own example ($915.00 earned, $914.00 delivered) and a payout refused in debt.
 
 **Go-live check (1 Nov, v0.1.8 app):** a build-test app's own "Run it on Fragment" steps against a real Fragment
 ledger (internal test workspace): `store-schema` and `create-ledger` as written, then the app on Fragment with a
