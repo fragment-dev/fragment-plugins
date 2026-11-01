@@ -31,12 +31,12 @@ is tagged (latest: `v0.1.8`; pin the tag you submit).
 | Our Claude Code marketplace | `claude plugin marketplace add fragment-dev/fragment-plugins` | Ready; works today on the private repo | Make the repo public |
 | skills.sh / `npx skills add fragment-dev/fragment-plugins` | Automatic from the public repo | Ready | Make the repo public |
 | Gemini CLI extensions | Daily crawl of public repos with the `gemini-cli-extension` topic | `gemini-extension.json` + `GEMINI.md` added | Add the topic; check with `gemini extensions install <repo>` |
-| Anthropic directory (plugin) | claude.ai/directory/manage → Submit new → Plugin bundle → this repo, path `plugins/fragment` | **Submitted 31 Oct** (v0.1.5): scan passed, in review | Answer the data-handling questions with the disclosure above |
+| Anthropic directory (plugin) | claude.ai/directory/manage → Submit new → Plugin bundle → this repo, path `plugins/fragment` | **Submitted 31 Oct**; tracks tag `v0.1.7` (scan passed, waiting for a reviewer). Kept on v0.1.7 to hold its review place; move the tracked tag to the latest release after approval | Answer the data-handling questions with the disclosure above |
 | Anthropic directory (MCP connector) | Same portal → MCP connector | **Blocked**: needs one public MCP URL | Fragment eng: a shared MCP endpoint (or confirm per-workspace URLs can't be listed) |
 | Official MCP registry | `mcp-publisher init` (to get the current schema), then publish with the fields in [mcp-registry-server.json](mcp-registry-server.json) | **Blocked** on the same URL; DNS TXT on fragment.dev for `dev.fragment/*` | DNS record; fill in the URL |
 | Cursor marketplace | cursor.com/marketplace/publish (manual review, ~2 weeks reported) | **Submitted 31 Oct** (publisher application, handle `fragment`, owner Individual · tom@fragment.dev) | Wait for Cursor's review email |
 | OpenAI (ChatGPT / Codex plugins) | platform.openai.com/plugins → Create plugin → "Skills only" | Ready as skills only | Identity verification; domain challenge file on fragment.dev |
-| Grok Build | PR to xai-org/plugin-marketplace with [grok-marketplace-entry.json](grok-marketplace-entry.json) | Entry drafted | Pin the release SHA; run their `validate-catalog.py` |
+| Grok Build | PR to xai-org/plugin-marketplace with [grok-marketplace-entry.json](grok-marketplace-entry.json) | **PR [xai-org/plugin-marketplace#1805](https://github.com/xai-org/plugin-marketplace/pull/1805)**, pinned to v0.1.8 (`a1e6947`); waiting for code-owner review | On each release: repin the SHA and version, run their `generate-plugin-index.py` |
 | VS Code / Copilot | Via the MCP registry, then partnerships@github.com | Blocked on the MCP URL | — |
 
 **Policy note:** Anthropic's connector review and OpenAI's plugin guidelines both refuse tools that transfer
