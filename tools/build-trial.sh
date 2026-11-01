@@ -2,11 +2,12 @@
 # Build trial: can a coding agent with the bare skills (in .agents/skills/, as `npx skills add` installs them)
 # take an ordinary request to working, ledger-enforced code, and how fast? Each run gets a fresh copy of a
 # small app in tools/build-trial/<task>/ and its TASK.md as the prompt; no Fragment account; 30 minutes.
-# Codex runs in its workspace-write sandbox with network on (installs, localhost), as a user who allows installs; Cursor's agent runs with --force (unsandboxed) in the temp folder.
+# Codex runs with a clean home (tools/codex-home.sh) in its workspace-write sandbox with network on (installs, localhost), as a user who allows installs; Cursor's agent runs with --force (unsandboxed) in the temp folder.
 #   tools/build-trial.sh <out-dir> [runs=1] [tasks...]
 R=${0:a:h:h}; OUT=${1:?out dir}; N=${2:-1}; shift $(( $# < 2 ? $# : 2 ))
 TASKS=($@); (( $#TASKS )) || TASKS=(credits-py budgets-ts); LIMIT=1800
 mkdir -p $OUT
+source $R/tools/codex-home.sh; CH=$(codex_home $OUT)   # no global MCP servers, hooks or skills
 # one copy per results folder: a second copy would rerun the unfinished runs into the same files
 mkdir $OUT/.running 2>/dev/null || { echo "another build-trial is using $OUT (remove $OUT/.running if it isn't)"; exit 1; }
 trap 'rmdir $OUT/.running 2>/dev/null' EXIT INT TERM
@@ -19,7 +20,7 @@ run() { # agent task i
   (cd $W && git init -q && git add -A && git -c user.email=t@example.com -c user.name=t commit -qm seed)
   local t0=$(date +%s)
   cd $W || { echo "$1 $2 $3: no workdir, not run"; rm -rf $o; return; }
-  if [ $1 = codex ]; then perl -e 'alarm shift; exec @ARGV' $LIMIT codex exec -s workspace-write -c sandbox_workspace_write.network_access=true --skip-git-repo-check \
+  if [ $1 = codex ]; then CODEX_HOME=$CH perl -e 'alarm shift; exec @ARGV' $LIMIT codex exec -s workspace-write -c sandbox_workspace_write.network_access=true --skip-git-repo-check \
       --json -o $o/answer.md "$p" < /dev/null > $o/events.jsonl 2> $o/stderr.log
   else perl -e 'alarm shift; exec @ARGV' $LIMIT cursor-agent -p --trust --force --output-format stream-json "$p" \
       < /dev/null > $o/events.jsonl 2> $o/stderr.log
