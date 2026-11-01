@@ -68,7 +68,31 @@ Python is `await client.add_ledger_entry(ik=..., ledger_ik=..., type_=..., param
 [quickstart](quickstart/QUICKSTART.md) has the schema, setup and the condition that refuses an overspend; the
 recipes add promo credits, reservations, payouts and refunds.
 
-## The workflow
+## Start fast: a working ledger in minutes
+
+When the user wants it built, get a ledger enforcing the core rules first, then offer to prove the whole flow.
+No Fragment account is needed for this part.
+
+1. **Adapt the quickstart schema** ([quickstart/credits-schema.jsonc](quickstart/credits-schema.jsonc)) to the
+   flow: its accounts and two or three entry types, each rule a condition (see the `ledger-rules` skill).
+   Check it with `fragment verify-schema -p schema.jsonc` if the CLI is installed.
+2. **Run it on the kit's local ledger** and show the rules holding, including a refusal:
+
+   ```python
+   import sys; sys.path.insert(0, "<this skill>/kit/fragment_kit")
+   from ledger import open_ledger
+   L = open_ledger("local:ledger.db", "schema.jsonc")          # no account: SQLite, same schema rules
+   L.post("purchase-p1", "credits_purchased", {"purchase_id": "p1", "wallet_id": "w1", "credits": "100"})
+   r = L.post("usage-u1", "credits_consumed", {"usage_id": "u1", "wallet_id": "w1", "credits": "150"})
+   print(r.ok, r.code)                                          # False conditional_request_failed
+   ```
+3. **Wire the app** with the SDK calls above. To go live, `fragment login --browser` (a person approves),
+   `fragment store-schema` and `fragment create-ledger`, then point the app at that ledger.
+
+Then offer the full workflow below to make it production-grade: the complete spec, a crash-safe service, and an
+independent judge that attacks the ledger. It runs offline too, on a local ledger.
+
+## The workflow: production-grade and proved
 
 1. **Write the spec** with the `money-flow-spec` skill: parties, states, amounts, rounding, time, failure,
    the invariants the ledger must enforce, and every field of every operation. Start from the closest recipe
@@ -83,8 +107,9 @@ recipes add promo credits, reservations, payouts and refunds.
 The kit is in this skill's [kit/](kit/) folder (Python 3.10+, standard library only): add `kit/fragment_kit`
 to the import path. The other skills refer to it as `../money-flows/kit/`, so install all four together.
 
-Test against a local ledger first (`LocalLedger` in `kit/fragment_kit/ledger.py`, same
-schema rules, no account needed), then against a Fragment ledger.
+Build and judge against a local ledger first (`open_ledger("local:<path>", schema)` in
+`kit/fragment_kit/ledger.py`: same schema rules, no account needed), then against a Fragment ledger
+(`open_ledger("fragment:<ledger ik>")`). Give the service a `--ledger` flag that takes either form.
 
 ## Recipes
 

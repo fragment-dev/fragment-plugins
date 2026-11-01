@@ -30,6 +30,10 @@ service, the ledger and the forbidden moves, so no per-build adapter is needed.
 Rules:
 - `start.command` placeholders: `{db}`, `{ledger}`, `{rail}` (the judge's HTTP rail URL), `{port}`. No shell
   syntax; `cwd` is relative to the manifest. The service must print nothing secret.
+- Write the ledger flag as `--ledger fragment:{ledger}` and have the service accept `fragment:<ik>` or
+  `local:<path>` (the kit's `open_ledger` does both). A judge run with `local=True` replaces
+  `fragment:{ledger}` with `local:<its fresh database>`, so the same manifest works offline.
+- `schema.file`: the schema the local ledger is built from.
 - `accounts`: Fragment paths with `{name}` placeholders for IDs (single braces).
 - `forbidden`: at least one move per ledger-enforced invariant in the spec's section 7; more is better.
   - `fixture` names an object state the **spec** defines (section 7 lists them); the judge creates it through

@@ -21,8 +21,10 @@ and attacks both the service and the ledger.
    move, and the entry type to be one the service really uses.
 4. **The build supplies `TRUST-BOUNDARY.md`** ([TRUST-BOUNDARY.md](TRUST-BOUNDARY.md)): each invariant marked
    ledger-enforced (and how) or service-attested (and why). Every ledger row gets attacked.
-5. **Run it on a fresh ledger** created from the stored schema: shared accounts on a reused ledger carry
-   balances from the last run.
+5. **Run it on a fresh ledger.** With no Fragment account, use `Harness(build, local=True)`: a fresh local
+   ledger from the manifest's schema file, the service started with `--ledger local:<path>`, and the forbidden
+   moves posted to that same database. On Fragment, use a ledger created from the stored schema
+   (`Harness(build, ledger="<ik>")`): shared accounts on a reused ledger carry balances from the last run.
 
 The flow passes when every check passes, every forbidden move is refused, and the service-attested rows
 are honest.

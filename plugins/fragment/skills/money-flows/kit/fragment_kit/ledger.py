@@ -62,7 +62,8 @@ class LocalLedger:
                 walk(a.get("children") or [], path + "/")
         walk(self.schema["chartOfAccounts"]["accounts"], "")
         self.lock = threading.Lock()
-        self.db = sqlite3.connect(db_path, check_same_thread=False, isolation_level=None)
+        # timeout: a judge and the service may open the same database from two processes
+        self.db = sqlite3.connect(db_path, check_same_thread=False, isolation_level=None, timeout=30)
         self.db.executescript("""
             CREATE TABLE IF NOT EXISTS balances (path TEXT PRIMARY KEY, amount INTEGER NOT NULL);
             CREATE TABLE IF NOT EXISTS bank_txs (tx TEXT PRIMARY KEY, amount INTEGER NOT NULL, reconciled_ik TEXT);
@@ -408,3 +409,16 @@ class FragmentLedger:
             data = self._gql(q).get("data") or {}
             out |= {p: int(data[f"a{i}"]["balance"]) if data.get(f"a{i}") else 0 for i, p in enumerate(chunk)}
         return out
+
+
+def open_ledger(spec: str, schema_path: Path | None = None):
+    """A ledger from a `--ledger` value: `fragment:<ledger ik>` (a Fragment ledger, through the Fragment CLI's
+    login) or `local:<sqlite path>` (the kit's LocalLedger, no account needed; give the schema file)."""
+    kind, _, rest = spec.partition(":")
+    if kind == "fragment" and rest:
+        return FragmentLedger(rest)
+    if kind == "local" and rest:
+        if schema_path is None:
+            raise ValueError("a local ledger needs the schema file")
+        return LocalLedger(Path(schema_path), Path(rest))
+    raise ValueError(f"--ledger must be fragment:<ledger ik> or local:<path>, not {spec!r}")

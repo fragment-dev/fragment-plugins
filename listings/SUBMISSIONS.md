@@ -1,15 +1,16 @@
 # Listing the Fragment plugin
 
 Everything below is prepared but **not submitted**. Prerequisites: the repo is public, and the release commit
-is tagged (latest: `v0.1.5`; pin the tag you submit).
+is tagged (latest: `v0.1.6`; pin the tag you submit).
 
 ## Shared copy
 
 - **Name:** Fragment
 - **One line:** Build money flows in your app on a ledger that enforces its own rules.
-- **Short description (≤ 200 chars):** Prepaid credits, wallets, payouts, escrow and spending limits on a
-  Fragment ledger: no negative balances, nothing settled twice, even if your code is wrong. Tested recipes
-  and code.
+- **Short description (as submitted to Cursor):** Helps coding agents build prepaid credits, wallets, payouts,
+  escrow and spending limits on a Fragment ledger. The ledger refuses bad changes itself: balances can't go
+  negative and nothing is credited twice, even if the app's code has a bug. Includes tested code in TypeScript,
+  Python and Ruby, and six judged recipes. Payments stay on Stripe or your bank; the plugin never moves money.
 - **Long description:** Coding agents keep app balances in a `balance` column or a ledger they write
   themselves, so the rules ("never negative", "credit a purchase once") hold only as long as every code path
   is right. This plugin teaches the agent to keep balances in a Fragment ledger, where each entry type
@@ -30,10 +31,10 @@ is tagged (latest: `v0.1.5`; pin the tag you submit).
 | Our Claude Code marketplace | `claude plugin marketplace add fragment-dev/fragment-plugins` | Ready; works today on the private repo | Make the repo public |
 | skills.sh / `npx skills add fragment-dev/fragment-plugins` | Automatic from the public repo | Ready | Make the repo public |
 | Gemini CLI extensions | Daily crawl of public repos with the `gemini-cli-extension` topic | `gemini-extension.json` + `GEMINI.md` added | Add the topic; check with `gemini extensions install <repo>` |
-| Anthropic directory (plugin) | claude.ai/directory/manage → Submit new → Plugin bundle → this repo, path `plugins/fragment` | Validator passes; icon and privacy URL added | Answer the data-handling questions with the disclosure above |
+| Anthropic directory (plugin) | claude.ai/directory/manage → Submit new → Plugin bundle → this repo, path `plugins/fragment` | **Submitted 31 Oct** (v0.1.5): scan passed, in review | Answer the data-handling questions with the disclosure above |
 | Anthropic directory (MCP connector) | Same portal → MCP connector | **Blocked**: needs one public MCP URL | Fragment eng: a shared MCP endpoint (or confirm per-workspace URLs can't be listed) |
 | Official MCP registry | `mcp-publisher init` (to get the current schema), then publish with the fields in [mcp-registry-server.json](mcp-registry-server.json) | **Blocked** on the same URL; DNS TXT on fragment.dev for `dev.fragment/*` | DNS record; fill in the URL |
-| Cursor marketplace | cursor.com/marketplace/publish (manual review, ~2 weeks reported) | `.cursor-plugin/` manifests added (skills only; no MCP, since the URL is per workspace) | Submit the form with the shared copy |
+| Cursor marketplace | cursor.com/marketplace/publish (manual review, ~2 weeks reported) | **Submitted 31 Oct** (publisher application, handle `fragment`, owner Individual · tom@fragment.dev) | Wait for Cursor's review email |
 | OpenAI (ChatGPT / Codex plugins) | platform.openai.com/plugins → Create plugin → "Skills only" | Ready as skills only | Identity verification; domain challenge file on fragment.dev |
 | Grok Build | PR to xai-org/plugin-marketplace with [grok-marketplace-entry.json](grok-marketplace-entry.json) | Entry drafted | Pin the release SHA; run their `validate-catalog.py` |
 | VS Code / Copilot | Via the MCP registry, then partnerships@github.com | Blocked on the MCP URL | — |

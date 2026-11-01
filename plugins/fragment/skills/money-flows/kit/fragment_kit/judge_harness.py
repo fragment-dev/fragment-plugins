@@ -34,7 +34,7 @@ from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-from ledger import FragmentLedger                  # noqa: E402  (ledger API access only)
+from ledger import FragmentLedger, LocalLedger     # noqa: E402  (ledger API access only)
 
 TYPED = {"conditional_request_failed", "ledger_entry_entry_type_disabled", "entry_type_not_found",
          "schema_entry_type_not_found"}
@@ -94,13 +94,23 @@ class Rail:
 
 
 class Harness:
-    def __init__(self, build: Path, ledger: str | None = None):
-        """ledger: run on this ledger instead of the manifest's judge_ledger, e.g. a fresh one for a rerun
-        (shared accounts on a reused ledger carry the last run's balances)."""
+    def __init__(self, build: Path, ledger: str | None = None, local: bool = False):
+        """ledger: run on this Fragment ledger instead of the manifest's judge_ledger, e.g. a fresh one for a
+        rerun (shared accounts on a reused ledger carry the last run's balances).
+        local: run on a fresh LocalLedger built from the manifest's schema file instead, with no Fragment
+        account. The service is started with `--ledger local:<path>` and the forbidden moves are posted to the
+        same database, so a flow can be built and proved offline."""
         self.build = Path(build)
         self.m = json.loads((self.build / "MANIFEST.json").read_text())
-        self.ledger_ik = ledger or self.m["judge_ledger"]
-        self.ledger = FragmentLedger(self.ledger_ik)
+        self.local = local
+        if local:
+            db = Path(tempfile.mkdtemp()) / "judge-ledger.db"
+            self.ledger = LocalLedger(self.build / self.m["schema"]["file"], db)
+            self.ledger_ik, self.ledger_spec = f"local:{db}", f"local:{db}"
+        else:
+            self.ledger_ik = ledger or self.m["judge_ledger"]
+            self.ledger_spec = f"fragment:{self.ledger_ik}"
+            self.ledger = FragmentLedger(self.ledger_ik)
         self.rail = Rail()
         self.port = free_port()
         self.base = f"http://127.0.0.1:{self.port}"
@@ -111,7 +121,11 @@ class Harness:
     # ---------------------------------------------------------------- the service
 
     def start(self):
-        cmd = self.m["start"]["command"].format(db=self.db, ledger=self.ledger_ik, rail=self.rail.url, port=self.port)
+        template = self.m["start"]["command"]
+        if self.local:            # "--ledger fragment:{ledger}" in a manifest means "the judge's ledger"
+            template = template.replace("fragment:{ledger}", "{ledger_spec}")
+        cmd = template.format(db=self.db, ledger=self.ledger_ik, ledger_spec=self.ledger_spec, rail=self.rail.url,
+                              port=self.port)
         cwd = (self.build / self.m["start"].get("cwd", ".")).resolve()
         self.proc = subprocess.Popen(shlex.split(cmd), cwd=cwd, stdout=subprocess.DEVNULL,
                                      stderr=open(self.db.with_suffix(".log"), "w"), start_new_session=True)   # inherits the environment; ledger.py strips CLI colour codes itself
@@ -184,8 +198,11 @@ class Harness:
         return self.ledger.balances(list(paths))
 
     def settled_entry_types(self, settle=10):
-        """Entry types on the ledger, from two listings `settle` seconds apart that agree."""
+        """Entry types on the ledger, from two listings `settle` seconds apart that agree (Fragment's listing is
+        eventually consistent; a local ledger's isn't, so one listing is enough)."""
         listed = self.ledger.entries()
+        if getattr(self.ledger, "listing_consistent", False):
+            return {e["type"] for e in listed}
         while True:
             time.sleep(settle)
             again = self.ledger.entries()
