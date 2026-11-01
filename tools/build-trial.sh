@@ -22,7 +22,7 @@ run() { # agent task i
   (cd $W && git init -q && git add -A && git -c user.email=t@example.com -c user.name=t commit -qm seed)
   local t0=$(date +%s)
   cd $W || { echo "$1 $2 $3: no workdir, not run"; rm -rf $o; return; }
-  if [ $1 = codex ]; then CODEX_HOME=$CH perl -e 'alarm shift; exec @ARGV' $LIMIT codex exec -s workspace-write -c sandbox_workspace_write.network_access=true --skip-git-repo-check \
+  if [ $1 = codex ]; then HOME=$CH/home CODEX_HOME=$CH perl -e 'alarm shift; exec @ARGV' $LIMIT codex exec -s workspace-write -c sandbox_workspace_write.network_access=true --skip-git-repo-check \
       --json -o $o/answer.md "$p" < /dev/null > $o/events.jsonl 2> $o/stderr.log
   else perl -e 'alarm shift; exec @ARGV' $LIMIT cursor-agent -p --trust --force --output-format stream-json "$p" \
       < /dev/null > $o/events.jsonl 2> $o/stderr.log
