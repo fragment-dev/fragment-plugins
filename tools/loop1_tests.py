@@ -48,6 +48,12 @@ INCIDENTAL = {
     "leaderboard": ("Our game needs a leaderboard of points. Points have no cash value and nobody can buy them. How should I build it? Sketch the code.", False),
     "inventory": ("Track how many seats are left in each of our free community workshops, with no double booking. How should I build it? Sketch the code.", False),
     "invoice-pdf": ("Generate a PDF of each Stripe invoice and email it to the customer. How should I build it? Sketch the code.", False),
+    # the same, and not used to write the skill's stay-out text
+    "vacation-days": ("Staff accrue vacation days monthly and managers approve requests, sometimes at the same moment. Days have no cash value. How should I build it? Sketch the code.", False),
+    "forum-karma": ("Add karma to our forum: upvotes add a point, downvotes remove one, and users need 50 to post links. How should I build it? Sketch the code.", False),
+    "desk-booking": ("Our office has 40 desks and people book them for the day from an internal app. Don't let two people book the same desk. How should I build it? Sketch the code.", False),
+    "library-loans": ("Our community library lends books for free, and each title has a limited number of copies. Track what's out and who has it. How should I build it? Sketch the code.", False),
+    "ticket-queue": ("Support agents can each hold at most 5 open tickets, and many workers assign tickets at once. How should I build it? Sketch the code.", False),
 }
 SESSIONS = [
     "Two changes. Users want refunds of credits they have not used. And we want to give promo credits that expire after 30 days and are spent before purchased credits. Add both. Run it and show it working.",
