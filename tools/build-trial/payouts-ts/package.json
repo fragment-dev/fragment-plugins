@@ -1,0 +1,1 @@
+{ "name": "platform-payouts", "private": true, "type": "module", "scripts": { "start": "node --experimental-strip-types server.ts" } }
