@@ -10,7 +10,9 @@ mkdir -p $OUT
 source $R/tools/codex-home.sh; CH=$(codex_home $OUT)   # no global MCP servers, hooks or skills
 # one copy per results folder: a second copy would rerun the unfinished runs into the same files
 mkdir $OUT/.running 2>/dev/null || { echo "another build-trial is using $OUT (remove $OUT/.running if it isn't)"; exit 1; }
-trap 'rmdir $OUT/.running 2>/dev/null' EXIT INT TERM
+source $R/tools/cursor-skills.sh   # after the lock: a copy that exits on it never moves the skill
+trap 'rmdir $OUT/.running 2>/dev/null; cursor_skills_restore' EXIT INT TERM
+cursor_skills_aside   # Cursor's agent runs without the user's browser skill
 run() { # agent task i
   local o=$OUT/$1-$2-$3; [ -e $o/answer.md ] && return
   mkdir -p $o; local W=$(mktemp -d)/app

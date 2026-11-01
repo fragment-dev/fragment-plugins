@@ -4,6 +4,7 @@
 #   tools/cross-agent.sh <out-dir> [runs-with=2] [runs-without=1]
 set -e
 R=${0:a:h:h}; OUT=${1:?out dir}; RW=${2:-2}; RO=${3:-1}
+source $R/tools/cursor-skills.sh; cursor_skills_aside; trap cursor_skills_restore EXIT INT TERM   # Cursor's agent runs without the user's browser skill
 source $R/tools/codex-home.sh; mkdir -p $OUT; CH=$(codex_home $OUT)
 W=$(mktemp -d); mkdir -p $W/with/.agents/skills $W/without $OUT
 cp -R $R/plugins/fragment/skills/* $W/with/.agents/skills/
