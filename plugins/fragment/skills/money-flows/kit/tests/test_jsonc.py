@@ -54,5 +54,28 @@ class CommentedSchemaTest(unittest.TestCase):
         self.assertIn("ledgerEntries", service_core.load_schema(self.schema))
 
 
+class PreAndPostConditionTest(unittest.TestCase):
+    """Fragment's verify-schema refuses a condition with both checks; the local ledger and endpoint do too."""
+
+    def setUp(self):
+        text = QUICKSTART.read_text().replace(
+            '"postcondition": { "totalBalance": { "gte": "0" } }',
+            '"precondition": { "totalBalance": { "gte": "0" } }, "postcondition": { "totalBalance": { "gte": "0" } }', 1)
+        self.dir = Path(tempfile.mkdtemp())
+        self.schema = self.dir / "schema.jsonc"
+        self.schema.write_text(text)
+
+    def test_local_ledger_refuses(self):
+        with self.assertRaisesRegex(ValueError, "both precondition and postcondition"):
+            LocalLedger(self.schema, self.dir / "ledger.db")
+
+    def test_endpoint_refuses_store_schema(self):
+        from local_server import BadRequest, Ledgers
+        from ledger import load_schema
+        with self.assertRaises(BadRequest) as e:
+            Ledgers(self.dir / "local").store_schema(load_schema(self.schema))
+        self.assertIn("both precondition and postcondition", e.exception.message)
+
+
 if __name__ == "__main__":
     unittest.main()

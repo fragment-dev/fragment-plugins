@@ -26,7 +26,7 @@ from datetime import datetime, timezone
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 
-from ledger import LocalLedger, load_schema
+from ledger import LocalLedger, check_schema, load_schema
 
 FIELD = re.compile(r"^\s*(?:(?:query|mutation)\b[^{]*)?\{\s*(?:\w+\s*:\s*)?(\w+)", re.S)
 COMMENT = re.compile(r"#[^\n]*")
@@ -51,6 +51,10 @@ class Ledgers:
         key = schema.get("key")
         if not key:
             raise BadRequest("bad_request", "the schema needs a key")
+        try:
+            check_schema(schema)
+        except (ValueError, KeyError, TypeError) as e:
+            raise BadRequest("bad_request", f"invalid schema: {e}")
         f = self.root / "schemas" / f"{key}.json"
         versions = json.loads(f.read_text())["versions"] if f.exists() else []
         if not versions or versions[-1]["json"] != schema:
@@ -290,7 +294,12 @@ def main():
     args = ap.parse_args()
     ledgers = Ledgers(Path(args.dir))
     if args.schema:
-        stored = ledgers.store_schema(load_schema(Path(args.schema)))
+        try:
+            stored = ledgers.store_schema(load_schema(Path(args.schema)))
+        except BadRequest as e:
+            raise SystemExit(f"{args.schema}: {e.message}")
+        except ValueError as e:                        # not valid JSON or JSONC (json.JSONDecodeError included)
+            raise SystemExit(f"{args.schema}: not a valid schema file: {e}")
         if args.ledger:
             ledgers.create(args.ledger, args.ledger, stored["key"])
     serve(Api(ledgers), "127.0.0.1", args.port).serve_forever()

@@ -83,7 +83,14 @@ write your own balance tables, and don't add a service in another language.
 2. **Wire the app** with the SDK calls in "Start here": TypeScript `@fragment-dev/node-client`, Python
    `fragment-python`, Ruby `fragment-dev`, Go `fragment-go` (the [SDK list](https://fragment.dev/api-reference/ledger-sdks)
    has each install line); any other language posts to the GraphQL API. Read `apiUrl`, `authUrl`, `clientId`,
-   `clientSecret` and `scope` from the app's existing config or secret store, never hard-coded.
+   `clientSecret` and `scope` from the app's existing config or secret store, never hard-coded. Two rules for
+   that code:
+   - **An idempotency key names one exact request.** Fragment answers a repeated `ik` with the original result
+     (`isIkReplay: true`) even if the parameters differ, so build the key from the operation's id and details
+     (or a hash of them), and never treat a replay as success for a different request.
+   - **Money that leaves through a rail is held, then settled or released.** Post a hold before sending, settle
+     it when the rail confirms, and release it back to the balance if the send fails; never spend the balance
+     outright before the money has gone ([platform payouts](recipes/platform-payouts.md) shows the entries).
 3. **Run it now, with no account, on the local Fragment endpoint.** It serves the schema on 127.0.0.1 and answers
    the SDK as Fragment does (same conditions, idempotency and errors), so the app runs its real Fragment code:
 

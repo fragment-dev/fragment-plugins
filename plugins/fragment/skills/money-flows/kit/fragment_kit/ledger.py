@@ -76,6 +76,16 @@ def parse_jsonc(text: str):
     return json.loads(_outside_strings(_outside_strings(text, _comment), _trailing_comma))
 
 
+def check_schema(schema: dict):
+    """Refuses what `fragment verify-schema` refuses and the local ledger would otherwise misread."""
+    for t in schema["ledgerEntries"]["types"]:
+        for c in t.get("conditions", []):
+            if "precondition" in c and "postcondition" in c:
+                raise ValueError(f"{t['type']} v{t.get('typeVersion', 1)}: you may not specify both precondition and "
+                                 f"postcondition on the same condition ({c['account']['path']}); split it into two "
+                                 f"conditions")
+
+
 def load_schema(path: Path) -> dict:
     return parse_jsonc(Path(path).read_text())
 
@@ -95,6 +105,7 @@ class LocalLedger:
     def __init__(self, schema_path: Path, db_path: Path):
         self.schema = load_schema(schema_path)
         self.types = {(t["type"], t.get("typeVersion", 1)): t for t in self.schema["ledgerEntries"]["types"]}
+        check_schema(self.schema)
         self.root_type = {a["key"]: a["type"] for a in self.schema["chartOfAccounts"]["accounts"]}
         self.strong = set()
 
