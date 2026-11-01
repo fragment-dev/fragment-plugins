@@ -71,5 +71,12 @@ tools/build-trial.sh <dir> 2              # tasks: credits-py (Python), budgets-
 | v0.1.8 | Codex | 2–6 min | 4 of 4, idempotency keys from the request's details in 4 of 4 | 4 of 4 |
 | v0.1.8 | Cursor | 6.5–12 min of work | 4 of 4, keys from details in 4 of 4 | in its answers (2 runs then waited on their own servers until the 30-min limit) |
 | v0.1.7, outside user | Claude Code plugin (Instinct, Codespace) | refusal at 2m46s, done at 4m52s | yes (Python SDK) | yes |
+| v0.1.9 | Codex | 2–3 min | 4 of 4; demos follow the app's config in 4 of 4 | 4 of 4, with `fragment workspace` |
+| v0.1.9 | Cursor | 8–12.5 min, all ended on their own | 4 of 4 | 4 of 4, with `fragment workspace` |
+
+**Go-live check (1 Nov, v0.1.8 app):** a build-test app's own "Run it on Fragment" steps against a real Fragment
+ledger (internal test workspace): `store-schema` and `create-ledger` as written, then the app on Fragment with a
+config change only. Purchase, 8 duplicate webhooks, 12 concurrent spends (2 succeed, 10 refused) and an overspend
+all behaved as on the local endpoint. Not covered: `fragment api-client create` (the CLI can't delete a client).
 
 Codex copied the endpoint into the app in 3 of 4 v0.1.7 runs; packaging it (`pipx run`/`npx`) would remove that.
