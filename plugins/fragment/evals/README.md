@@ -68,5 +68,8 @@ tools/build-trial.sh <dir> 2              # tasks: credits-py (Python), budgets-
 | v0.1.6 | Cursor | about 20 min, up to 5,100 lines | no | no |
 | v0.1.7 | Codex | 2–3.5 min, 800–1,600 lines | 4 of 4 | 4 of 4 |
 | v0.1.7 | Cursor | 9–11 min, 385–960 lines | 4 of 4 | 2 of 4 (2 runs ended on background tasks before their summary) |
+| v0.1.8 | Codex | 2–6 min | 4 of 4, idempotency keys from the request's details in 4 of 4 | 4 of 4 |
+| v0.1.8 | Cursor | 6.5–12 min of work | 4 of 4, keys from details in 4 of 4 | in its answers (2 runs then waited on their own servers until the 30-min limit) |
+| v0.1.7, outside user | Claude Code plugin (Instinct, Codespace) | refusal at 2m46s, done at 4m52s | yes (Python SDK) | yes |
 
 Codex copied the endpoint into the app in 3 of 4 v0.1.7 runs; packaging it (`pipx run`/`npx`) would remove that.
