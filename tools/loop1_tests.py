@@ -4,7 +4,7 @@
                  Does the agent find Fragment at all? The real baseline for discovery.
     incidental   Skills installed, requests that don't name a money flow, and look-alikes with no money in them
                  (should stay out). Read-only. Does the skill trigger when it should, and only then?
-    next-project Skills installed globally, not in the project (Codex only: it has a clean home to put them in).
+    next-project Skills installed globally, not in the project.
                  A new app with a money need: does the agent reach for it again?
     sequence     Five fresh sessions in a row on one app built earlier, each with a new change. With --no-skills the
                  skills are deleted first, as for a teammate without the plugin. Do balances stay on the ledger?
@@ -14,8 +14,8 @@
     tools/loop1.sh next-project <out> [--runs 2]
     tools/loop1.sh sequence <out> --from <build-test-dir> [--task credits-py] [--no-skills]
 
-Keyword scoring is a first pass: read the answers and diffs by hand. Uses your Codex and Cursor accounts; Codex gets an
-empty home and Cursor runs unsandboxed in a temp folder.
+Keyword scoring is a first pass: read the answers and diffs by hand. Uses your Codex and Cursor accounts. Each agent gets
+an empty home and a short tool list; Cursor still runs unsandboxed, so that keeps it from finding things, not from reaching them.
 """
 import argparse, json, os, re, shutil, subprocess, tempfile, time
 from concurrent.futures import ThreadPoolExecutor
@@ -25,6 +25,9 @@ ROOT = Path(__file__).resolve().parent.parent
 SKILLS = ROOT / "plugins/fragment/skills"
 SEEDS = ROOT / "tools/build-trial"
 LIMIT = "1800"
+REAL_HOME = Path.home()
+LOCAL_BIN = REAL_HOME / ".local/bin"
+KEEP_TOOLS = ("cursor-agent", "agent", "node", "npm", "npx", "python3.11")
 SDK = re.compile(r"node-client|fragment-python|from fragment\.|createFragmentClient|addLedgerEntry|add_ledger_entry|fragment store-schema")
 OWN_BALANCE = re.compile(r"^\+.*create table[^\n]*(balance|credit|wallet|ledger|amount)", re.I | re.M)
 
@@ -55,20 +58,41 @@ SESSIONS = [
 ]
 
 
+def clean_tools(out: Path):
+    """A PATH without ~/.local/bin's other tools, such as the fragment CLI and anything holding money or credentials."""
+    bin_dir = out / "bin"; bin_dir.mkdir(exist_ok=True)
+    for name in KEEP_TOOLS:
+        src = LOCAL_BIN / name
+        if src.exists() and not (bin_dir / name).exists():
+            (bin_dir / name).symlink_to(src.resolve())
+    return ":".join(str(bin_dir) if d == str(LOCAL_BIN) else d for d in os.environ["PATH"].split(":"))
+
+
 def agent_env(agent, out: Path, global_skills=False):
+    """An empty home for each agent: the user's credentials, config and global skills stay out of the test."""
     env = dict(os.environ)
+    home = out / "agent-home"; (home / "home").mkdir(parents=True, exist_ok=True); home.chmod(0o700)
+    env |= {"HOME": str(home / "home"), "PATH": clean_tools(out)}
     if agent == "codex":
-        home = out / "codex-home"; (home / "home").mkdir(parents=True, exist_ok=True); home.chmod(0o700)
-        src = Path(os.environ.get("CODEX_HOME", Path.home() / ".codex"))
+        src = Path(os.environ.get("CODEX_HOME", REAL_HOME / ".codex"))
         if not (home / "auth.json").exists():
             (home / "auth.json").symlink_to(src / "auth.json")
         keep = [l for l in (src / "config.toml").read_text().splitlines() if re.match(r"(model|model_reasoning_effort|model_provider) *=", l)]
         (home / "config.toml").write_text("\n".join(keep) + "\n")
-        env |= {"CODEX_HOME": str(home), "HOME": str(home / "home")}
-        if global_skills:
-            dest = home / "home/.agents/skills"
-            if not dest.exists():
-                shutil.copytree(SKILLS, dest)
+        env["CODEX_HOME"] = str(home)
+        skills = home / "home/.agents/skills"
+    else:
+        lib = home / "home/Library"; lib.mkdir(exist_ok=True)      # Cursor's sign-in is in the keychain
+        if not (lib / "Keychains").exists():
+            (lib / "Keychains").symlink_to(REAL_HOME / "Library/Keychains")
+        conf = json.loads((REAL_HOME / ".cursor/cli-config.json").read_text())
+        (home / "home/.cursor").mkdir(exist_ok=True)
+        cfg = home / "home/.cursor/cli-config.json"
+        if not cfg.exists():
+            cfg.write_text(json.dumps({k: conf[k] for k in ("version", "model", "selectedModel", "modelParameters", "maxMode", "hasChangedDefaultModel") if k in conf}))
+        skills = home / "home/.cursor/skills"
+    if global_skills and not skills.exists():
+        shutil.copytree(SKILLS, skills)
     return env
 
 
@@ -181,17 +205,17 @@ def incidental(a, root):
 
 
 def next_project(a, root):
-    def one(task, i):
-        out = root / f"codex-{task}-{i}"
+    def one(agent, task, i):
+        out = root / f"{agent}-{task}-{i}"
         work, prompt = seed(task)
-        secs, text = run("codex", prompt, work, out, global_skills=True)
+        secs, text = run(agent, prompt, work, out, global_skills=True)
         stop_leftovers(work)
         patch = diff(work, out)
-        row = {"agent": "codex", "case": task, "run": i, "seconds": secs, "named_fragment": bool(re.search(r"\bfragment\b", text, re.I)),
+        row = {"agent": agent, "case": task, "run": i, "seconds": secs, "named_fragment": bool(re.search(r"\bfragment\b", text, re.I)),
                "fragment_code": bool(SDK.search(patch))}
         print(json.dumps(row), flush=True)
         return row
-    rows = pool([(t, i) for t in ("payouts-ts", "business-py") for i in range(1, a.runs + 1)], one)
+    rows = pool([(g, t, i) for g in ("codex", "cursor") for t in ("payouts-ts", "business-py") for i in range(1, a.runs + 1)], one)
     print(f"\n Next project, skills installed globally: built on Fragment {sum(r['fragment_code'] for r in rows)} of {len(rows)}.")
     return rows
 
