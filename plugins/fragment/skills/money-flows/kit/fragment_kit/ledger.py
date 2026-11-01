@@ -29,11 +29,55 @@ class PostResult:
     ik: str = ""        # set by reconcile(): the ledger names a reconciliation entry after its bank transaction
 
 
+def _outside_strings(text: str, keep):
+    """Rebuilds text, copying every JSON string whole and asking keep(text, i) how many characters outside a
+    string to keep (> 0) or skip (< 0) at position i."""
+    out, i, n = [], 0, len(text)
+    while i < n:
+        if text[i] == '"':
+            j = i + 1
+            while j < n and text[j] != '"':
+                j += 2 if text[j] == "\\" else 1
+            out.append(text[i:j + 1])
+            i = j + 1
+            continue
+        step = keep(text, i)
+        if step > 0:
+            out.append(text[i:i + step])
+        i += abs(step)
+    return "".join(out)
+
+
+def _comment(text: str, i: int) -> int:
+    if text.startswith("//", i):
+        end = text.find("\n", i)
+        return -((end if end >= 0 else len(text)) - i)
+    if text.startswith("/*", i):
+        end = text.find("*/", i + 2)
+        if end < 0:
+            raise ValueError("unterminated /* comment in schema")
+        return -(end + 2 - i)
+    return 1
+
+
+def _trailing_comma(text: str, i: int) -> int:
+    if text[i] == ",":
+        j = i + 1
+        while j < len(text) and text[j].isspace():
+            j += 1
+        if j < len(text) and text[j] in "}]":
+            return -1
+    return 1
+
+
+def parse_jsonc(text: str):
+    """JSON with comments, as Fragment schema files allow: // and /* */ comments anywhere outside strings, and
+    trailing commas before } or ]. Strings are kept exactly as written."""
+    return json.loads(_outside_strings(_outside_strings(text, _comment), _trailing_comma))
+
+
 def load_schema(path: Path) -> dict:
-    text = Path(path).read_text()
-    if text.startswith("//"):
-        text = text.split("\n", 1)[1]
-    return json.loads(text)
+    return parse_jsonc(Path(path).read_text())
 
 
 class LocalLedger:

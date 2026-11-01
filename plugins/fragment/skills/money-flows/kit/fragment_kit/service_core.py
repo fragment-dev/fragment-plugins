@@ -35,11 +35,15 @@ import hashlib
 import json
 import re
 import sqlite3
+import sys
 import threading
 import urllib.parse
 from dataclasses import dataclass, field
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
+
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from ledger import load_schema                      # noqa: E402  (JSONC: comments anywhere, trailing commas)
 
 CORE_SCHEMA = """
 CREATE TABLE IF NOT EXISTS operations (
@@ -103,9 +107,6 @@ def is_int(v) -> bool:
     return isinstance(v, int) and not isinstance(v, bool)
 
 
-def load_schema(path: Path) -> dict:
-    text = Path(path).read_text()
-    return json.loads(re.sub(r"^\s*//.*$", "", text, flags=re.M))
 
 
 class Mirror:
