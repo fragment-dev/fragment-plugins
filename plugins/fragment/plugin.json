@@ -1,0 +1,23 @@
+{
+  "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
+  "name": "fragment",
+  "version": "0.1.9",
+  "description": "Build money flows in your app (prepaid credits, wallets, payouts, escrow, spending limits) on a Fragment ledger whose rules the ledger itself enforces, and prove them with an independent judge.",
+  "author": {
+    "name": "Fragment",
+    "url": "https://fragment.dev"
+  },
+  "homepage": "https://fragment.dev",
+  "repository": "https://github.com/fragment-dev/fragment-plugins",
+  "license": "MIT",
+  "keywords": [
+    "ledger",
+    "credits",
+    "wallets",
+    "payments",
+    "payouts",
+    "escrow",
+    "balances",
+    "fintech"
+  ]
+}
