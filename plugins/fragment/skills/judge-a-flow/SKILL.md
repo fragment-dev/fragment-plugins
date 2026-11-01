@@ -1,6 +1,6 @@
 ---
 name: judge-a-flow
-description: Proves a ledger-backed money flow works by writing an independent judge from the spec alone, fixing its fingerprint before the build is read, then testing the service over HTTP (amounts, races, crashes, retries) and posting forbidden entries straight to the ledger, each of which must be refused. Use after building a money flow, before shipping it, or when someone asks whether a flow is correct.
+description: Proves a ledger-backed money flow works by writing an independent judge from the spec alone, fixing its fingerprint before the build is read, then testing the service over HTTP (amounts, races, crashes, retries) and posting forbidden entries straight to the ledger, each of which must be refused. Use when the user asks to prove, audit or judge a flow, or whether it is correct. It is not a routine step of building one.
 ---
 
 # Judge a money flow

@@ -74,12 +74,15 @@ recipes add promo credits, reservations, payouts and refunds.
 ## Build it: in the app's own language, in minutes
 
 When the user wants it built, build it into their app, in their language and framework, on the Fragment SDK.
-Keep it small: a schema file, the SDK calls in the app's existing code paths, and a short demo or test. Don't
-write your own balance tables, and don't add a service in another language.
+This is the path for every flow, however many rules it has: fees, holds, payouts, refunds, chargebacks and debt mean
+more entry types, not a different process. Keep it small: a schema file, the SDK calls in the app's existing code
+paths, and a short demo or test. Don't write your own balance tables, don't add a service in another language, and
+don't write a spec document, manifest, trust-boundary document or judge unless the user asks for one.
 
-1. **Write the schema** by adapting [quickstart/credits-schema.jsonc](quickstart/credits-schema.jsonc) (or
-   the closest recipe): its accounts and two or three entry types, each rule a condition (see the
-   `ledger-rules` skill). Check it with `fragment verify-schema -p schema.jsonc` if the CLI is installed.
+1. **Write the schema** by adapting [quickstart/credits-schema.jsonc](quickstart/credits-schema.jsonc), with the
+   closest recipe for the rules and edge cases to cover: its accounts and entry types, each rule a condition (see the
+   `ledger-rules` skill). A small script may generate a large schema; the app's own code stays in its language.
+   Check it with `fragment verify-schema -p schema.jsonc` if the CLI is installed.
 2. **Wire the app** with the SDK calls in "Start here": TypeScript `@fragment-dev/node-client`, Python
    `fragment-python`, Ruby `fragment-dev`, Go `fragment-go` (the [SDK list](https://fragment.dev/api-reference/ledger-sdks)
    has each install line); any other language posts to the GraphQL API. Read `apiUrl`, `authUrl`, `clientId`,
@@ -122,8 +125,8 @@ Do this even if the user chose their own database: say which part of the code wo
 
 ## Prove it: the full workflow, when asked
 
-Use this only when the user asks for it to be proved, production-grade, audited or judged, or when the
-stakes call for it (real money to third parties, lending, escrow). Otherwise offer it in one line at the end.
+Use this only when the user asks for it to be proved, audited or judged, or for a written spec. A flow's size or
+stakes aren't a reason to start here: build it first, and offer this in one line at the end, saying what it would add.
 It adds a complete spec, a crash-safe service and an independent judge that attacks the ledger, and runs
 offline too, on a local ledger.
 
@@ -146,7 +149,8 @@ Build and judge against a local ledger first (`open_ledger("local:<path>", schem
 
 ## Recipes
 
-Each was built from its spec with this kit and passed an independent judge. Read the closest one first.
+Read the closest one first, for the rules, states and edge cases your flow should cover, then build as in "Build it".
+Each is written as a full spec, which the proof workflow can start from, and each passed an independent judge.
 
 | Recipe | Use for | Spec |
 |---|---|---|

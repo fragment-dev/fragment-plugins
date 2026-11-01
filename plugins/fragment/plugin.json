@@ -1,7 +1,7 @@
 {
   "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
   "name": "fragment",
-  "version": "0.1.9",
+  "version": "0.1.10",
   "description": "Build money flows in your app (prepaid credits, wallets, payouts, escrow, spending limits) on a Fragment ledger whose rules the ledger itself enforces, and prove them with an independent judge.",
   "author": {
     "name": "Fragment",

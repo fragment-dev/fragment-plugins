@@ -1,6 +1,6 @@
 ---
 name: money-flow-spec
-description: Writes the requirements spec for a money flow (credits, wallets, payouts, escrow, lending, spending limits) before any code — parties, states, amounts and rounding, time, failure, the invariants a ledger must enforce, and every field of every operation. Use before building a ledger-backed flow, or when the user describes how money should move in their app.
+description: Writes the requirements spec for a money flow (credits, wallets, payouts, escrow, lending, spending limits): parties, states, amounts and rounding, time, failure, the invariants a ledger must enforce, and every field of every operation. Use when the user asks for a written spec, or to prove or audit a flow. An ordinary request to build a flow doesn't need one: use money-flows.
 ---
 
 # Write a money-flow spec
