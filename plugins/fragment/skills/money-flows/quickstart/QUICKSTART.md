@@ -14,7 +14,7 @@ The full recipe (promo credits that expire, reservations for long jobs, transfer
 - `credits_purchased`: adds credits to `liabilities/wallets/wallet:{{wallet_id}}/purchased`, and marks the
   purchase used (`liabilities/once/purchase:{{purchase_id}}` must end at exactly 1, so it credits once).
 - `credits_consumed`: moves credits from the wallet to `income/usage`. Its condition, the wallet must end
-  `gte 0`, is what makes overspending impossible, whatever the app's code does.
+  `gte 0`, is what refuses an overspend on every entry of this type.
 
 ```bash
 npm install -g @fragment-dev/cli

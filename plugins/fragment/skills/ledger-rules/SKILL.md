@@ -1,6 +1,6 @@
 ---
 name: ledger-rules
-description: Designs a Fragment ledger schema whose entry types enforce a money flow's invariants as ledger conditions — no negative balances, settle-once state machines, exact splits, bounded captures and refunds, fees proved on the ledger — using the kit's tested primitives. Use when writing or reviewing a Fragment schema, or when a rule must hold even if the app's code is wrong.
+description: Designs a Fragment ledger schema whose entry types enforce a money flow's invariants as ledger conditions — no negative balances, settle-once state machines, exact splits, bounded captures and refunds, fees proved on the ledger — using the kit's tested primitives. Use when writing or reviewing a Fragment schema, or when the ledger itself must check a rule on every entry.
 ---
 
 # Make the ledger enforce the rules

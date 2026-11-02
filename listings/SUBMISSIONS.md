@@ -7,7 +7,7 @@ is tagged (latest: `v0.1.10`; pin the tag you submit).
 
 - **Name:** Fragment
 - **One line:** Build money flows in your app on a ledger that enforces its own rules.
-- **Short description (as submitted to Cursor):** Helps coding agents build prepaid credits, wallets, payouts,
+- **Short description (as submitted to Cursor on 31 Oct; its last clause needs replacing at the next update, with "every entry posted through your entry types is checked by the ledger"):** Helps coding agents build prepaid credits, wallets, payouts,
   escrow and spending limits on a Fragment ledger. The ledger refuses bad changes itself: balances can't go
   negative and nothing is credited twice, even if the app's code has a bug. Includes tested code in TypeScript,
   Python and Ruby, and six judged recipes. Payments stay on Stripe or your bank; the plugin never moves money.

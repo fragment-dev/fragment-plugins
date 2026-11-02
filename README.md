@@ -1,8 +1,8 @@
 # Fragment for coding agents
 
 Build the money parts of your app (prepaid credits, wallets, payouts, escrow, spending limits) on a
-[Fragment](https://fragment.dev) ledger that refuses bad changes itself. No negative balances, and nothing
-credited or settled twice, even if your code has a bug.
+[Fragment](https://fragment.dev) ledger that refuses bad changes itself. Every entry posted through
+your entry types is checked by the ledger: no negative balances, and nothing credited or settled twice.
 
 ## Install
 

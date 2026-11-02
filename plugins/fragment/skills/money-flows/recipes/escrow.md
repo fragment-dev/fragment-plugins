@@ -73,7 +73,7 @@ Deposits and withdrawals go through a rail with the kit's rail contract
 
 ## 7. Correctness the ledger itself must enforce
 
-These must hold even if the service is buggy: Fragment must refuse an entry that would break them, not
+These must hold on every entry the service posts: Fragment must refuse an entry that would break them, not
 only the service. The judge will post entries straight to your ledger, with the service's credentials,
 using the entry types you declare in the manifest, and expects them to be refused.
 

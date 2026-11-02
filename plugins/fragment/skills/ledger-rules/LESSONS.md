@@ -11,7 +11,7 @@ credits). They're why ../money-flows/kit/fragment_kit/primitives.py looks the wa
   entry's slack hide another's negative. Use a fresh account per entry, e.g.
   `checks/op:{{operation_id}}/e:{{n}}/...`, with a `used` marker the entry adds 1 to and requires to end at 1.
 - **Exactly-once on the ledger**: an account that must go 0 → 1 (post eq 1) makes a second attempt fail.
-  That's how a milestone can settle only once even if the service is wrong.
+  That's how the ledger makes a milestone settle only once, on every entry of that type.
 - **Entry idempotency key**: the same `ik` with the same content replays; with different content it is
   refused. Use deterministic iks derived from the operation.
 - **Schema size cap is about 385 KB**, and a stored entry type version can never be removed. Keep the

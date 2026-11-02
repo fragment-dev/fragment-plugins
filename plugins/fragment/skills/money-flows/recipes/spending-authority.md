@@ -4,8 +4,9 @@
 
 A business lets AI agents spend its money on its behalf: paying vendors for operations work. Each agent has a
 budget per period, a cap per payment and an approval threshold; payments above the threshold need a person's
-approval, bound to that exact payment. The point of building it on a ledger: these limits hold **even if the
-agent, or the software around it, misbehaves**, because the ledger refuses a payment that breaks them.
+approval, bound to that exact payment. The point of building it on a ledger: **the ledger itself checks these
+limits on every entry posted through these types**, and refuses a payment that breaks them, whichever code posts it. Keep the
+Fragment credentials away from the agent.
 
 Amounts are integer US cents. Times are integer seconds supplied by the caller as `now`, never read from a clock.
 

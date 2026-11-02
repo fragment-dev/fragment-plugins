@@ -7,8 +7,8 @@
 An AI product sells prepaid credits. Customers buy credit packs, the app grants promotional credits, usage
 draws credits down, long-running jobs reserve credits first and capture what they actually used, unused
 purchased credits can be refunded, and promotional credits expire. A team can pool credits in a shared wallet
-and move them to members. Built on Fragment so that no wallet can go negative and no credit is spent twice,
-even if the app's own code is wrong.
+and move them to members. Built on Fragment so that the ledger checks every entry posted through these types: no wallet can go
+negative and no credit is spent twice.
 
 Amounts are integer credits (1 credit = 1 US cent of purchase price). Times are integer seconds supplied by
 the caller as `now`, never read from a clock. **Every request field is named in section 8; use exactly those names.**
