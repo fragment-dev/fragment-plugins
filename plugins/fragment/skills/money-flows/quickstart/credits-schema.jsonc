@@ -8,7 +8,8 @@
     "accounts": [
       { "key": "assets", "type": "asset", "children": [
         { "key": "card-receipts", "consistencyConfig": { "totalBalanceUpdates": "strong" } },
-        { "key": "markers", "consistencyConfig": { "totalBalanceUpdates": "strong" } }
+        { "key": "markers", "consistencyConfig": { "totalBalanceUpdates": "strong" } },
+        { "key": "amount-checks", "consistencyConfig": { "totalBalanceUpdates": "strong" } }
       ] },
       { "key": "income", "type": "income", "children": [
         { "key": "usage", "consistencyConfig": { "totalBalanceUpdates": "strong" } }
@@ -20,6 +21,11 @@
           ] }
         ] },
         { "key": "once", "children": [
+          { "key": "purchase", "template": true, "consistencyConfig": { "totalBalanceUpdates": "strong" } },
+          { "key": "usage", "template": true, "consistencyConfig": { "totalBalanceUpdates": "strong" } }
+        ] },
+        // A fresh account per entry holds the amount, so a condition can refuse a zero or negative one.
+        { "key": "positive", "children": [
           { "key": "purchase", "template": true, "consistencyConfig": { "totalBalanceUpdates": "strong" } },
           { "key": "usage", "template": true, "consistencyConfig": { "totalBalanceUpdates": "strong" } }
         ] }
@@ -35,10 +41,13 @@
           { "key": "cash", "account": { "path": "assets/card-receipts" }, "amount": "{{credits}}" },
           { "key": "wallet", "account": { "path": "liabilities/wallets/wallet:{{wallet_id}}/purchased" }, "amount": "{{credits}}" },
           { "key": "marker", "account": { "path": "liabilities/once/purchase:{{purchase_id}}" }, "amount": "1" },
-          { "key": "marker_offset", "account": { "path": "assets/markers" }, "amount": "1" }
+          { "key": "marker_offset", "account": { "path": "assets/markers" }, "amount": "1" },
+          { "key": "positive", "account": { "path": "liabilities/positive/purchase:{{purchase_id}}" }, "amount": "{{credits}}" },
+          { "key": "positive_offset", "account": { "path": "assets/amount-checks" }, "amount": "{{credits}}" }
         ],
         "conditions": [
-          { "account": { "path": "liabilities/once/purchase:{{purchase_id}}" }, "postcondition": { "totalBalance": { "eq": "1" } } }
+          { "account": { "path": "liabilities/once/purchase:{{purchase_id}}" }, "postcondition": { "totalBalance": { "eq": "1" } } },
+          { "account": { "path": "liabilities/positive/purchase:{{purchase_id}}" }, "postcondition": { "totalBalance": { "gte": "1" } } }
         ]
       },
       {
@@ -48,11 +57,14 @@
           { "key": "wallet", "account": { "path": "liabilities/wallets/wallet:{{wallet_id}}/purchased" }, "amount": "-{{credits}}" },
           { "key": "revenue", "account": { "path": "income/usage" }, "amount": "{{credits}}" },
           { "key": "marker", "account": { "path": "liabilities/once/usage:{{usage_id}}" }, "amount": "1" },
-          { "key": "marker_offset", "account": { "path": "assets/markers" }, "amount": "1" }
+          { "key": "marker_offset", "account": { "path": "assets/markers" }, "amount": "1" },
+          { "key": "positive", "account": { "path": "liabilities/positive/usage:{{usage_id}}" }, "amount": "{{credits}}" },
+          { "key": "positive_offset", "account": { "path": "assets/amount-checks" }, "amount": "{{credits}}" }
         ],
         "conditions": [
           { "account": { "path": "liabilities/wallets/wallet:{{wallet_id}}/purchased" }, "postcondition": { "totalBalance": { "gte": "0" } } },
-          { "account": { "path": "liabilities/once/usage:{{usage_id}}" }, "postcondition": { "totalBalance": { "eq": "1" } } }
+          { "account": { "path": "liabilities/once/usage:{{usage_id}}" }, "postcondition": { "totalBalance": { "eq": "1" } } },
+          { "account": { "path": "liabilities/positive/usage:{{usage_id}}" }, "postcondition": { "totalBalance": { "gte": "1" } } }
         ]
       }
     ]

@@ -137,5 +137,21 @@ class SchemaChecks(unittest.TestCase):
         check_schema(schema)
 
 
+class AmountsArePositive(unittest.TestCase):
+    def test_quickstart_refuses_negative_and_zero_amounts(self):
+        with tempfile.TemporaryDirectory() as d:
+            ledgers = Ledgers(Path(d))
+            key = ledgers.store_schema(load_schema(SCHEMA))["key"]
+            ledgers.create("c", "c", key)
+            led = ledgers.get("c")
+            led.post("p1", "credits_purchased", {"purchase_id": "p1", "wallet_id": "w1", "credits": "100"})
+            for n, credits in enumerate(("-5", "0")):
+                r = led.post(f"u{n}", "credits_consumed", {"usage_id": f"u{n}", "wallet_id": "w1", "credits": credits})
+                self.assertFalse(r.ok, credits)
+            self.assertFalse(led.post("p2", "credits_purchased", {"purchase_id": "p2", "wallet_id": "w1", "credits": "-5"}).ok)
+            self.assertTrue(led.post("u9", "credits_consumed", {"usage_id": "u9", "wallet_id": "w1", "credits": "10"}).ok)
+            self.assertEqual(led.balances([WALLET])[WALLET], 90)
+
+
 if __name__ == "__main__":
     unittest.main()

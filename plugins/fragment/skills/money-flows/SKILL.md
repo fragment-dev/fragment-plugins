@@ -92,10 +92,12 @@ don't write a spec document, manifest, trust-boundary document or judge unless t
    has each install line); any other language posts to the GraphQL API. Read `apiUrl`, `authUrl`, `clientId`,
    `clientSecret` and `scope` from the app's existing config or secret store, never hard-coded. On Cloudflare
    Workers, add `compatibility_flags = ["nodejs_compat"]` to the Worker's config (the TypeScript SDK signs in
-   with Node's `Buffer`) and keep the credentials in `wrangler secret`. Two rules for that code:
+   with Node's `Buffer`) and keep the credentials in `wrangler secret`. Three rules for that code:
    - **An idempotency key names one exact request.** Fragment answers a repeated `ik` with the original result
      (`isIkReplay: true`) even if the parameters differ, so build the key from the operation's id and details
      (or a hash of them), and never treat a replay as success for a different request.
+   - **An amount can be any number the caller sends.** A spend of -5 adds 5 unless a condition refuses it, so every entry
+     type that takes an amount needs a check that it's positive (the `ledger-rules` skill shows how).
    - **Money that leaves through a rail is held, then settled or released.** Post a hold before sending, settle
      it when the rail confirms, and release it back to the balance if the send fails; never spend the balance
      outright before the money has gone ([platform payouts](recipes/platform-payouts.md) shows the entries).

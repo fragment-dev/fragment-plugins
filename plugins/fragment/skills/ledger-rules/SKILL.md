@@ -13,6 +13,7 @@ failed build.
 |---|---|---|
 | A balance never goes negative | `move` + `nonneg` | the source account must end ≥ 0 |
 | Something happens once (settle, capture, expire) | `once` / `step` | a state account must go exactly 0→1, or n→n+1 |
+| An amount can't be zero or negative | `check_ge0` on the amount | a parameter can be any number, so a spend of -5 adds 5 unless a condition refuses it; every entry type that takes an amount needs this |
 | a ≥ b | `check_ge0` | post a − b into a fresh per-entry account that must end ≥ 0 |
 | An account ends at an exact value (an escrow fully paid out) | `exact` | the account must end exactly at the value |
 | Parts sum to a whole (a split) | `eq_zero` | the sum of the parts minus the whole must net to 0 |
