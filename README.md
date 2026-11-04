@@ -31,7 +31,7 @@ Then ask for what you need, for example "add prepaid credits to this app."
 ## How it fits
 
 Stripe or your bank moves the money. Fragment holds the balances and enforces the rules. The plugin never moves
-money. You need a Fragment workspace; your agent sets one up with `fragment login --browser`.
+money. You can build and run it with no account: your agent uses a local Fragment endpoint. To go live, a person signs in once with `fragment login --browser` and the app changes config.
 [What the plugin sends where](plugins/fragment/README.md#what-this-plugin-sends-where).
 
 ## Develop
