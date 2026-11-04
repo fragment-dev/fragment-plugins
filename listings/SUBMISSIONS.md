@@ -1,7 +1,7 @@
 # Listing the Fragment plugin
 
 Everything below is prepared but **not submitted**. Prerequisites: the repo is public, and the release commit
-is tagged (latest: `v0.1.11`; pin the tag you submit).
+is tagged (latest: `v0.1.12`; pin the tag you submit).
 
 ## Shared copy
 
@@ -31,7 +31,7 @@ is tagged (latest: `v0.1.11`; pin the tag you submit).
 | Our Claude Code marketplace | `claude plugin marketplace add fragment-dev/fragment-plugins` | Ready; works today on the private repo | Make the repo public |
 | skills.sh / `npx skills add fragment-dev/fragment-plugins` | Automatic from the public repo | Ready | Make the repo public |
 | Gemini CLI extensions | Daily crawl of public repos with the `gemini-cli-extension` topic | `gemini-extension.json` + `GEMINI.md` added | Add the topic; check with `gemini extensions install <repo>` |
-| Anthropic directory (plugin) | claude.ai/directory/manage → Submit new → Plugin bundle → this repo, path `plugins/fragment` | **Submitted 31 Oct**; tracks tag `v0.1.7` (scan passed, waiting for a reviewer). Kept on v0.1.7 to hold its review place; move the tracked tag to the latest release after approval | Answer the data-handling questions with the disclosure above |
+| Anthropic directory (plugin) | claude.ai/directory/manage → Submit new → Plugin bundle → this repo, path `plugins/fragment` | **Submitted 31 Oct**; tracks tag `v0.1.12` since 4 Nov (a new scan and publish request replaced the v0.1.7 request). Move the tracked tag to each later release | Answer the data-handling questions with the disclosure above |
 | Anthropic directory (MCP connector) | Same portal → MCP connector | **Blocked**: needs one public MCP URL | Fragment eng: a shared MCP endpoint (or confirm per-workspace URLs can't be listed) |
 | Official MCP registry | `mcp-publisher init` (to get the current schema), then publish with the fields in [mcp-registry-server.json](mcp-registry-server.json) | **Blocked** on the same URL; DNS TXT on fragment.dev for `dev.fragment/*` | DNS record; fill in the URL |
 | Cursor marketplace | cursor.com/marketplace/publish (manual review, ~2 weeks reported) | **Submitted 31 Oct** (publisher application, handle `fragment`, owner Individual · tom@fragment.dev) | Wait for Cursor's review email |
