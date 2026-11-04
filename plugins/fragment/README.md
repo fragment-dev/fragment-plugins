@@ -3,7 +3,7 @@
 Build the money parts of an app — prepaid credits, wallets, top-ups, marketplace payouts and fee splits,
 escrow, refunds, spending limits for agents or teams — on a [Fragment](https://fragment.dev) ledger whose
 rules the ledger itself enforces. A wallet that would go negative, a payout that would settle twice or a
-capture larger than its hold is refused by Fragment, even if the app's code is wrong.
+capture larger than its hold is refused by Fragment, on every entry posted through those types.
 
 ## What's inside
 
