@@ -92,3 +92,8 @@ config change only. Purchase, 8 duplicate webhooks, 12 concurrent spends (2 succ
 all behaved as on the local endpoint. Not covered: `fragment api-client create` (the CLI can't delete a client).
 
 Codex copied the endpoint into the app in 3 of 4 v0.1.7 runs; packaging it (`pipx run`/`npx`) would remove that.
+
+## v0.1.11 baseline (4 Nov 2026)
+
+Pick rate on the bare skills: Codex 12 of 12 with, 0 of 6 without. Cursor 4 of 4 with, then its account hit a usage limit, so 8 runs and the no-skills runs are still to do. With no money involved: 0 of 40 named Fragment, across both agents, measured before the final wording change. Build test on the candidate before the amount fix and wording change: all 14 runs used the SDK and left the note; Codex 3.2-7.5 min, Cursor 6.9-18 min. After the amount fix (credits only, before the wording change): Codex 3.8 min, Cursor 9.2 min, both with the amount check.
+
